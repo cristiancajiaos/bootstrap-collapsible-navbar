@@ -1,0 +1,230 @@
+<form [formGroup]="escritoForm">
+  <app-form-card [mostrarBotones]="false" [titulo]="tituloBuscar" [fondoClaro]="true">
+    <div class="form-content">
+
+      <div class="px-3">
+        <app-consulta-causa-general (onConsultarCausaEventComplete)="onConsultarCausaComplete($event);"
+          (onConsultarCausaEventError)="onConsultarCausaError($event);" [soloDigitarAnnioEscrito]="false">
+        </app-consulta-causa-general>
+      </div>
+    </div>
+  </app-form-card>
+  <div class="row">
+
+    <div class="col-md-4" *ngIf="norm===false" [ngClass]=" norm ? 'd-none' : 'col-md-12'">
+      <app-form-card title="Resumen escrito ingresado" [mostrarBotones]="false">
+        <div class="form-content">
+          <div class="px-3">
+            <div class="col-md-12 mb-3">
+              <div class="form-group">
+                <label class="label-input">Parte que presenta</label>
+                <input type="text" id="parte" class="sinborde form-control" placeholder="{{nombrePartePresenta}}"
+                  disabled>
+              </div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <div class="form-group">
+                <label class="label-input">Tipo de escrito</label>
+                <input type="text" id="tipoDeEscrito" class="sinborde form-control" placeholder="{{tipoEscrito}}"
+                  disabled>
+              </div>
+            </div>
+            <div class="col-md-12 mb-5">
+              <div class="form-group">
+                <!--label class="label-input">Documento</label>
+                                    <br>
+                                    <button class="btn-icono icono-pdf" style="float: left;"></button><span style="float: left;">Escrito Prueba.pdf</span>
+                                    <button type="button" style="margin-left: 5px;float: right;" class="btn btn-primary btn-file"  (click)="adjuntar(adj)"><i
+                                            class="icono-menu-adjuntar-documento"></i>
+                                    </button-->
+                <label class="label-input">Documento</label>
+                <div class="input-group">
+                  <button type="button" *ngIf="nombreDocumento!='Selecione archivo'"
+                    class="btn btn-icono icono-pdf-25 shadow-z-1-hover" title="Ver documento" (click)="verDocumento()">
+                  </button>
+                  <!--button  class="btn-icono icono-pdf" (click)="verDocumento()"></button-->
+                  <input type="text" class="sinborde form-control" disabled placeholder="{{nombreDocumento}}">
+                  <div class="input-group-append">
+                    <button type="button" style="margin-left: 5px;float: right;"
+                      class="btn btn-primary btn-file shadow-z-1-hover" title="Adjuntar" (click)="adjuntar(adj)"><i
+                        class="icono-menu-adjuntar-documento mr-1"></i>Adjuntar
+                    </button>
+                  </div>
+                  <div class="row col-md-12">
+                    <!--div class="btn-toolbar align-content-center" style="margin: auto">
+                                                <div class="btn-group mr-2" ngbDropdown role="group">
+                                                    <button id="btnColumnas" type="button" class="dropdown-toggle btn btn-outline-primary mr-1" title="Columnas Visibles" ngbDropdownToggle>
+                                                        ver archivos
+                                                    </button>
+                                                    <div ngbDropdownMenu aria-labelledby="btnColumnas">
+                                                        <a *ngFor="let column of prueba"
+                                                        >
+                                                            <div class="custom-control custom-switch mr-2">
+                                                                <input type="checkbox" class="custom-control-input">
+                                                                <label class="custom-control-label">archivo.pdf<button type="button" class="btn btn-icono icono-pdf-25 shadow-z-1-hover" title="Ver documento"></button></label>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                            </div-->
+                    <ul class="col-md-12" *ngIf="documentosAnexos.length>0">
+                      <li title="Documentos anexos" (click)="mostrarAnexos()"><i class="icono-anexos-25 mt-2"></i></li>
+                      <div *ngIf="this.flagDesplegarAnexos">
+                        <li *ngFor="let item of documentosAnexos"><a (click)="mostrarArchivo2(item)">{{item.name}}</a>
+                        </li>
+                      </div>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <div class="form-group">
+                <label class="label-input">Distribuido a:</label>
+                <input type="text" class="sinborde form-control" placeholder="Funcionario de prueba" disabled>
+              </div>
+            </div>
+            <div class="form-actions right">
+              <!--button type="button" class="btn btn-secondary mr-2" (click)="verDocumento()"><i
+                                        class="fa ft-file"></i> Ver doc
+                                </button-->
+              <button type="button" class="btn btn-primary mr-2 shadow-z-1-hover round"
+                (click)="desplegarResumen()">Ingresar nuevo escrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </app-form-card>
+    </div>
+
+    <div [ngClass]=" norm ? 'col-md-12' : 'd-none'" style="height: 100%;">
+      <app-form-card title="Ingresar escrito" [titulo]="tituloIngresar" [mostrarBotones]="false">
+        <div class="form-content">
+          <div class="px-3">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="label-input">Rit</label>
+                  <input type="text" id="rit" class="sinborde form-control" formControlName="rit" disabled>
+                </div>
+              </div>
+              <div class="col-md-4"
+                *ngIf="this.competencia===competenciaEnum.Familia || this.competencia===competenciaEnum.Laboral || this.competencia===competenciaEnum.Cobranza">
+                <div class="form-group">
+                  <label class="label-input">RUC</label>
+                  <input type="text" id="ruc" class="sinborde form-control" formControlName="ruc" disabled>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="label-input">Caratulado</label>
+                  <input type="text" id="caratulado" class="sinborde form-control" formControlName="caratulado"
+                    disabled>
+                </div>
+              </div>
+              <div class="col-md-4" *ngIf="this.competencia===competenciaEnum.Civil">
+                <div class="form-group">
+                  <label class="label-input">Estado Administrativo</label>
+                  <input type="text" id="estadoAdministrativo" class="sinborde form-control"
+                    formControlName="estadoAdministrativo" disabled>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-2" *ngIf="this.competencia===competenciaEnum.Cobranza">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="label-input">Juez Asignado</label>
+                  <input type="text" id="juez" class="sinborde form-control" formControlName="juez" disabled>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-3"
+              *ngIf="this.competencia===competenciaEnum.Familia || this.competencia===competenciaEnum.Laboral || this.competencia===competenciaEnum.Civil || this.competencia===competenciaEnum.Cobranza">
+              <div class="col-sm-4">
+                <label>Participante</label>
+                <app-participante-escrito-select [filtrarPorVigencia]="true" [competencia]="competencia"
+                  (participanteEscritoChange)="participanteEscritoChange($event)">
+                </app-participante-escrito-select>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-sm-4">
+                <label>Parte que presenta</label>
+                <app-participantes-causa-select (participanteChange)="participanteCausaChange($event)"
+                  [idCausa]="idCausa" [idCuaderno]="idCuaderno" title="Parte que presenta">
+                </app-participantes-causa-select>
+              </div>
+
+              <div class="col-sm-4 ag-label-align-right" style="padding-top:30px;"
+                *ngIf="this.competencia===competenciaEnum.Garantia || this.competencia===competenciaEnum.Laboral || this.competencia===competenciaEnum.Familia || this.competencia===competenciaEnum.OralEnLoPenal || true">
+                <label class="tasks-list-item" title="Solicita agregar parte">
+                  <input type="checkbox" ngModel="chkselct" class="tasks-list-cb" (click)="llamarParte($event)"
+                    [checked]="chkselct" />
+                  <span class="tasks-list-mark"></span>
+                  <span>Agregar parte</span>
+                </label>
+                <div *ngIf="this.chkselct" class="col-sm-6 " style="...">
+                  <div class="popover ng-star-inserted bs-popover-bottom-center"
+                    style="position: absolute; top: 0px; left: 0px; will-change: transform;
+                                             width:300px; min-height: 60px; transform: translate(30px, 0px); text-align: center;">
+                    <div class="arrow align-self-center"></div>
+                    <h3 class="popover-header ng-star-inserted">Información</h3>
+                    <span class="popover-body" style="padding: 6px;">
+                      {{this.parametro.glosaDescripcion}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4" *ngIf="this.competencia === competenciaEnum.Civil">
+                <label>Grupo de escrito</label>
+                <app-grupo-escrito-select (grupoEscritoChange)="grupoEscritoChange($event)" [competencia]="competencia">
+                </app-grupo-escrito-select>
+              </div>
+              <div class="col-sm-4">
+                <label>Tipo de escrito</label>
+                <app-tipo-escrito-select (tipoEscritoChange)="tipoEscritoChange($event)" [competencia]="competencia"
+                  [filtrarPorVigencia]="true" [participante]="participante" [grupo]="grupo"></app-tipo-escrito-select>
+              </div>
+            </div>
+            <div class="row"
+              *ngIf="this.competencia==competenciaEnum.Laboral || this.competencia === competenciaEnum.Civil">
+              <div class="col-sm-12 col-md-8">
+                <label>Referencia</label>
+                <textarea type="text" id="referencia" maxlength="300" class="form-control"
+                  formControlName="referencia"></textarea>
+              </div>
+            </div>
+            <div class="form-actions right">
+              <!--button type="button" class="btn btn-secondary mr-2" (click)="verDocumento()"><i
+                                        class="fa ft-file"></i> Ver doc
+                                </button-->
+              <!--button type="button" class="btn btn-secondary mr-2 shadow-z-1-hover round" (click)="desplegarResumen()"><i
+                                        class="fa ft-file"></i> Mostrar
+                                </button-->
+              <!--button type="button" class="btn btn-secondary mr-2" (click)="adjuntar(adj)"><i
+                                        class="fa ft-file"></i> Adjuntar
+                                </button-->
+              <button type="button" class="btn btn-primary mr-2 shadow-z-1-hover round" (click)="obtenerData()"
+                disabled="{{btnGuardarDisabled}}" title="Grabar Escrito">
+                <span *ngIf="!flagIngresoCargar"><i class="fa fa-save"></i> Grabar escrito</span>
+                <span *ngIf="flagIngresoCargar"><i class="fa fa-spinner fa-spin"></i> Grabando...</span>
+              </button>
+              <button type="button" class="btn btn-danger mr-1 shadow-z-1-hover round" (click)="reset_filter()"
+                title="Limpiar"><i class="fa fa-trash"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </app-form-card>
+    </div>
+
+  </div>
+</form>
+<app-litigante *ngIf="agrpar" [title]="'Ingreso Solicita Agregar Parte'" [indesc]="true"
+  [title2]="'Detalle Solicita Agregar Parte'"></app-litigante>
+<app-litigante *ngIf="hacpar" [title]="'Ingreso Solicita Hacerse Parte'" [indesc]="true"
+  [title2]="'Detalle Solicita Hacerse Parte'"></app-litigante>
